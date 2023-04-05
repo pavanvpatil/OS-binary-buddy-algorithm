@@ -147,7 +147,7 @@ int main(int argc, char const *argv[])
     infile >> no_of_test_cases;
     string read_line;
     getline(infile, read_line); // to read the empty line
-
+    int test_case = 1;
     while (no_of_test_cases--)
     {
         long long int upper_limit, lower_limit;
@@ -186,9 +186,10 @@ int main(int argc, char const *argv[])
             increase_counter_all(root);
         }
 
-        cout << "Case " << no_of_test_cases + 1 << ":" << endl;
+        cout << "Case " << test_case << ":" << endl;
         print_leaf_nodes(root);
         cout << endl;
+        test_case++;
     }
     return 0;
 }
