@@ -1,3 +1,10 @@
+// author: Pavan Kumar V Patil
+// Roll No: 200030041
+// date: 2023-04-06
+// description: Implementation of binary buddy algorithm
+// course: Operating Systems
+// Institute: IIT Dharwad
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -130,14 +137,14 @@ void print_leaf_nodes(Tree_Node *root)
 
 int main(int argc, char const *argv[])
 {
-    if(argc != 2)
+    if (argc != 2)
     {
         cout << "Usage: ./a.out <input_file>" << endl;
         return 0;
     }
 
     ifstream infile(argv[1]);
-    if(!infile.is_open())
+    if (!infile.is_open())
     {
         cout << "Error in opening file" << endl;
         return 0;
