@@ -82,32 +82,55 @@ void allocate_memory(Tree_Node *root, long long int size, char name, long long i
     }
 }
 
-void free_memory(Tree_Node *root, char name)
+void find_free_memory(Tree_Node *root, char name, Tree_Node **find_free_node)
 {
     if (root == NULL)
         return;
-    free_memory(root->left, name);
+    find_free_memory(root->left, name, find_free_node);
     if (root->name == name)
     {
-        root->is_free = true;
-        root->name = '.';
-        root->id = 0;
-        root->actual_size = 0;
-        if (root->parent != NULL && root->parent->left->is_free && root->parent->right->is_free)
+        (*find_free_node) = root;
+        return;
+    }
+    find_free_memory(root->right, name, find_free_node);
+}
+
+void free_memory(Tree_Node *root, char name)
+{
+    Tree_Node *find_free_node = NULL;
+    find_free_memory(root, name, &find_free_node);
+    if (find_free_node == NULL)
+        return;
+
+    find_free_node->is_free = true;
+    find_free_node->name = '.';
+    find_free_node->actual_size = find_free_node->size;
+    find_free_node->counter = 0;
+
+    while(true)
+    {
+        if (find_free_node->parent == NULL)
         {
-            root->parent->is_divided = false;
-            root->parent->is_free = true;
-            root->parent->counter = 0;
-            root->parent->name = '.';
-            root->parent->actual_size = root->parent->size;
-            delete root->parent->left;
-            delete root->parent->right;
-            root->parent->left = NULL;
-            root->parent->right = NULL;
-            return;
+            break;
+        }
+        else if (find_free_node->parent->left->is_free && find_free_node->parent->right->is_free)
+        {
+            find_free_node->parent->is_divided = false;
+            find_free_node->parent->is_free = true;
+            find_free_node->parent->counter = 0;
+            find_free_node->parent->name = '.';
+            find_free_node->parent->actual_size = find_free_node->parent->size;
+            delete find_free_node->parent->left;
+            delete find_free_node->parent->right;
+            find_free_node->parent->left = NULL;
+            find_free_node->parent->right = NULL;
+            find_free_node = find_free_node->parent;
+        }
+        else
+        {
+            break;
         }
     }
-    free_memory(root->right, name);
 }
 
 void increase_counter_all(Tree_Node *root)
@@ -154,7 +177,6 @@ int main(int argc, char const *argv[])
     infile >> no_of_test_cases;
     string read_line;
     getline(infile, read_line); // to read the empty line
-    int test_case = 1;
     while (no_of_test_cases--)
     {
         long long int upper_limit, lower_limit;
@@ -193,10 +215,8 @@ int main(int argc, char const *argv[])
             increase_counter_all(root);
         }
 
-        cout << "Case " << test_case << ":" << endl;
         print_leaf_nodes(root);
         cout << endl;
-        test_case++;
     }
     return 0;
 }
